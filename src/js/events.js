@@ -1,21 +1,27 @@
-// events.js - Handles event form, API requests and event rendering
+// events.js - Handles event form, API requests and weekly event rendering
 
-// Import the API URL and auth headers function from the api.js module
 import { API_URL, getAuthHeaders } from "./api.js";
 
+// Keeps track of which week the user is currently viewing
+let currentWeekDate = new Date();
 
-// Function to initialize event listeners and render the week planner
+// Stores all events fetched from the API
+let savedEvents = [];
+
+// Initializes event functionality on the dashboard page
 export function initEvents() {
     const eventForm = document.querySelector("#eventForm");
+    const previousWeekButton = document.querySelector("#previousWeekButton");
+    const nextWeekButton = document.querySelector("#nextWeekButton");
 
     eventForm?.addEventListener("submit", createEvent);
+    previousWeekButton?.addEventListener("click", showPreviousWeek);
+    nextWeekButton?.addEventListener("click", showNextWeek);
 
-    renderWeekDays();
     getEvents();
 }
 
-
-// Function to handle event creation
+// Creates a new event and saves it through the API
 async function createEvent(event) {
     event.preventDefault();
 
@@ -25,7 +31,6 @@ async function createEvent(event) {
     const category = document.querySelector("#eventCategory").value;
     const description = document.querySelector("#eventDescription").value;
 
-    // Create an event object with the form data
     const newEvent = {
         title,
         date,
@@ -34,7 +39,6 @@ async function createEvent(event) {
         description
     };
 
-    // Send a POST request to the events endpoint with the new event data
     try {
         const response = await fetch(`${API_URL}/events`, {
             method: "POST",
@@ -48,89 +52,168 @@ async function createEvent(event) {
         }
 
         event.target.reset();
+
+        // Fetch events again so the new event appears in the current week view
         getEvents();
     } catch (error) {
-        console.error(error);
+        console.error("Error creating event:", error);
     }
 }
 
-// Function to render the week planner with empty day cards
-function renderWeekDays() {
-    const weekPlanner = document.querySelector("#weekPlanner");
-
-    const days = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-    ];
-
-    weekPlanner.innerHTML = "";
-
-    // Create a card for each day of the week
-    days.forEach((day) => {
-        const dayCard = document.createElement("article");
-        dayCard.classList.add("day-card");
-
-        const heading = document.createElement("h3");
-        heading.textContent = day;
-
-        const eventsContainer = document.createElement("div");
-        eventsContainer.classList.add("day-events");
-
-        const emptyMessage = document.createElement("p");
-        emptyMessage.textContent = "No events yet";
-
-        eventsContainer.append(emptyMessage);
-        dayCard.append(heading, eventsContainer);
-        weekPlanner.append(dayCard);
-    });
-}
-
-// Function to fetch events from the API
+// Fetches all events for the logged-in user
 async function getEvents() {
     try {
         const response = await fetch(`${API_URL}/events`, {
             headers: getAuthHeaders()
         });
 
-        const events = await response.json();
+        if (!response.ok) {
+            alert("Could not fetch events");
+            return;
+        }
 
-        renderEvents(events);
+        savedEvents = await response.json();
+
+        renderWeek();
     } catch (error) {
-        console.error(error);
+        console.error("Error fetching events:", error);
     }
 }
 
-// Function to render events in the week planner
-function renderEvents(events) {
+// Moves the calendar view one week back
+function showPreviousWeek() {
+    currentWeekDate.setDate(currentWeekDate.getDate() - 7);
+    renderWeek();
+}
+
+// Moves the calendar view one week forward
+function showNextWeek() {
+    currentWeekDate.setDate(currentWeekDate.getDate() + 7);
+    renderWeek();
+}
+
+// Renders the full week view
+function renderWeek() {
     const weekPlanner = document.querySelector("#weekPlanner");
+    const currentWeekLabel = document.querySelector("#currentWeekLabel");
+
+    const weekDays = getWeekDays(currentWeekDate);
 
     weekPlanner.innerHTML = "";
 
-    events.forEach((eventItem) => {
-        const eventCard = document.createElement("article");
-        eventCard.classList.add("day-card");
+    currentWeekLabel.textContent = `${formatDate(weekDays[0])} - ${formatDate(weekDays[6])}`;
 
-        const title = document.createElement("h3");
-        title.textContent = eventItem.title;
-
-        const date = document.createElement("p");
-        date.textContent = eventItem.date || eventItem.datetime;
-
-        const time = document.createElement("p");
-        time.textContent = eventItem.time || "";
-
-        const category = document.createElement("p");
-        category.textContent = eventItem.category || "";
-
-        const description = document.createElement("p");
-        description.textContent = eventItem.description || "";
-
-        eventCard.append(title, date, time, category, description);
-        weekPlanner.append(eventCard);
+    weekDays.forEach((day) => {
+        const dayCard = createDayCard(day);
+        weekPlanner.append(dayCard);
     });
+}
+
+// Returns all dates in the selected week, starting on Monday
+function getWeekDays(date) {
+    const selectedDate = new Date(date);
+
+    const dayNumber = selectedDate.getDay();
+    const daysFromMonday = dayNumber === 0 ? 6 : dayNumber - 1;
+
+    const monday = new Date(selectedDate);
+    monday.setDate(selectedDate.getDate() - daysFromMonday);
+
+    const weekDays = [];
+
+    for (let i = 0; i < 7; i++) {
+        const day = new Date(monday);
+        day.setDate(monday.getDate() + i);
+        weekDays.push(day);
+    }
+
+    return weekDays;
+}
+
+// Creates one day card for the week planner
+function createDayCard(day) {
+    const dayCard = document.createElement("article");
+    dayCard.classList.add("day-card");
+
+    const heading = document.createElement("h3");
+    heading.textContent = getDayHeading(day);
+
+    const eventsContainer = document.createElement("div");
+    eventsContainer.classList.add("day-events");
+
+    const eventsForDay = getEventsForDay(day);
+
+    if (eventsForDay.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.textContent = "No events yet";
+        eventsContainer.append(emptyMessage);
+    } else {
+        eventsForDay.forEach((eventItem) => {
+            const eventElement = createEventElement(eventItem);
+            eventsContainer.append(eventElement);
+        });
+    }
+
+    dayCard.append(heading, eventsContainer);
+
+    return dayCard;
+}
+
+// Finds events that match a specific day
+function getEventsForDay(day) {
+    const dayDateString = getDateString(day);
+
+    return savedEvents.filter((eventItem) => {
+        const eventDate = eventItem.date || eventItem.datetime;
+        return eventDate?.startsWith(dayDateString);
+    });
+}
+
+// Creates one visual event item inside a day card
+function createEventElement(eventItem) {
+    const eventElement = document.createElement("article");
+    eventElement.classList.add("event-item");
+
+    const title = document.createElement("h4");
+    title.textContent = eventItem.title;
+
+    const time = document.createElement("p");
+    time.textContent = eventItem.time ? `🕒 ${eventItem.time}` : "🕒 No time set";
+
+    const category = document.createElement("p");
+    category.textContent = eventItem.category ? `🏷️ ${eventItem.category}` : "";
+
+    const description = document.createElement("p");
+    description.textContent = eventItem.description || "";
+
+    eventElement.append(title, time, category, description);
+
+    return eventElement;
+}
+
+// Formats the day card heading, for example "Monday 10 Jun"
+function getDayHeading(day) {
+    const weekday = day.toLocaleDateString("en-GB", {
+        weekday: "long"
+    });
+
+    const date = day.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short"
+    });
+
+    return `${weekday} ${date}`;
+}
+
+// Formats the week label dates
+function formatDate(date) {
+    return date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short"
+    });
+}
+
+// Converts a Date object into YYYY-MM-DD format
+function getDateString(date) {
+    return date.toISOString().split("T")[0];
 }
