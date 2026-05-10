@@ -7,3 +7,29 @@
   border-radius: var.$radius-lg;
   box-shadow: 0 8px 24px var.$color-shadow;
 }
+
+/* Dashboard cards */
+.week-section,
+.todo-panel,
+.day-card {
+  background-color: var.$color-surface;
+  padding: var.$space-lg;
+  border-radius: var.$radius-lg;
+  box-shadow: 0 8px 24px var.$color-shadow;
+}
+
+.day-card {
+  display: grid;
+  gap: var.$space-sm;
+}
+
+.event-item {
+  margin-top: var.$space-sm;
+  padding: var.$space-md;
+  border-radius: var.$radius-lg;
+  background-color: var.$color-bg;
+}
+
+.event-item h4 {
+  margin-bottom: 0.4rem;
+}

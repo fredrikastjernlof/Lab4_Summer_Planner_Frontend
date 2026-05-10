@@ -28,3 +28,50 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Dashboard layout */
+
+.dashboard-layout {
+  width: min(100% - 2rem, var.$max-width);
+  margin: 0 auto;
+  display: grid;
+  gap: var.$space-lg;
+}
+
+.week-section {
+  display: grid;
+  gap: var.$space-lg;
+}
+
+.section-heading {
+  display: grid;
+  gap: var.$space-md;
+}
+
+.week-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var.$space-sm;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.week-planner {
+  display: grid;
+  gap: var.$space-md;
+}
+
+.todo-panel {
+  margin-top: var.$space-lg;
+}
+
+@media (min-width: 900px) {
+  .dashboard-layout {
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
+  }
+
+  .todo-panel {
+    margin-top: 0;
+  }
+}

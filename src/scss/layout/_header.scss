@@ -9,3 +9,13 @@
     margin-bottom: 0.5rem;
   }
 }
+
+
+.site-header--dashboard {
+  width: min(100% - 2rem, var.$max-width);
+  margin: 0 auto;
+  display: flex;
+  gap: var.$space-md;
+  align-items: center;
+  justify-content: space-between;
+}

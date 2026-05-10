@@ -6,9 +6,21 @@ form {
   margin-top: var.$space-md;
 }
 
-input {
+input,
+select,
+textarea {
   font: inherit;
   padding: 0.8rem 1rem;
   border-radius: var.$radius-pill;
   border: 1px solid var.$color-border;
+}
+
+textarea {
+  border-radius: var.$radius-lg;
+  resize: vertical;
+}
+
+.planner-form {
+  display: grid;
+  gap: var.$space-sm;
 }
