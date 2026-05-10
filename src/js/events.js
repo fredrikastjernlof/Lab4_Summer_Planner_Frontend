@@ -28,6 +28,7 @@ async function createEvent(event) {
     const title = document.querySelector("#eventTitle").value;
     const date = document.querySelector("#eventDate").value;
     const time = document.querySelector("#eventTime").value;
+    const endTime = document.querySelector("#eventEndTime").value;
     const category = document.querySelector("#eventCategory").value;
     const description = document.querySelector("#eventDescription").value;
 
@@ -35,6 +36,7 @@ async function createEvent(event) {
         title,
         date,
         time,
+        endTime,
         category,
         description
     };
@@ -178,7 +180,14 @@ function createEventElement(eventItem) {
     title.textContent = eventItem.title;
 
     const time = document.createElement("p");
-    time.textContent = eventItem.time ? `🕒 ${eventItem.time}` : "🕒 No time set";
+    
+    if (eventItem.time && eventItem.endTime) {
+        time.textContent = `🕒 ${eventItem.time} - ${eventItem.endTime}`;
+    } else if (eventItem.time) {
+        time.textContent = `🕒 ${eventItem.time}`;
+    } else {
+        time.textContent = "🕒 No time set";
+    }
 
     const category = document.createElement("p");
     category.textContent = eventItem.category ? `🏷️ ${eventItem.category}` : "";
