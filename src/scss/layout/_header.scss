@@ -1,0 +1,11 @@
+@use "../abstracts/variables" as var;
+
+.site-header {
+  text-align: center;
+  padding: var.$space-xxl var.$space-md var.$space-xl;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+}

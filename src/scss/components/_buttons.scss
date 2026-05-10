@@ -1,0 +1,11 @@
+@use "../abstracts/variables" as var;
+
+button {
+  font: inherit;
+  padding: 0.8rem 1rem;
+  border-radius: var.$radius-pill;
+  cursor: pointer;
+  border: none;
+  background-color: var.$color-primary;
+  font-weight: 700;
+}
