@@ -17,8 +17,26 @@ export function initDashboard() {
 
   logoutButton?.addEventListener("click", logoutUser);
 
+  showWelcomeMessage();
+
   initEvents();
   initTodos();
+}
+
+// Displays a personal welcome message using the username from the JWT token
+function showWelcomeMessage() {
+  const welcomeMessage = document.querySelector("#welcomeMessage");
+
+  const token = sessionStorage.getItem("token");
+
+  if (!token || !welcomeMessage) {
+    return;
+  }
+
+  const payload = JSON.parse(atob(token.split(".")[1]));
+
+  welcomeMessage.textContent =
+    `Welcome to yet another wonderful summer week, ${payload.username}! 🍓`;
 }
 
 // Function to handle user logout

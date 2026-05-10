@@ -12,7 +12,7 @@
     <header class="site-header site-header--dashboard">
         <div>
             <h1>🌞 Summer Planner</h1>
-            <p>Welcome to yet another wonderful summer week.</p>
+            <p id="welcomeMessage">Welcome to yet another wonderful summer week.</p>
         </div>
 
         <button id="logoutButton" type="button">Log out</button>
@@ -27,9 +27,9 @@
                 </div>
 
                 <div class="week-controls">
-                    <button id="previousWeekButton" type="button">&laquo;Previous</button>
+                    <button id="previousWeekButton" type="button">&laquo; Previous</button>
                     <p id="currentWeekLabel">Week view</p>
-                    <button id="nextWeekButton" type="button">Next&raquo;</button>
+                    <button id="nextWeekButton" type="button">Next &raquo;</button>
                 </div>
             </div>
 
@@ -44,6 +44,9 @@
 
                 <label for="eventTime">Time</label>
                 <input type="time" id="eventTime" />
+
+                <label for="eventEndTime">End time</label>
+                <input type="time" id="eventEndTime" />
 
                 <label for="eventCategory">Category</label>
                 <select id="eventCategory">
