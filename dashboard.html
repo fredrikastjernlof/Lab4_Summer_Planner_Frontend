@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/favicon_sun.png">
+    <title>Dashboard - Summer Planner</title>
+</head>
+
+<body>
+    <header class="site-header site-header--dashboard">
+        <div>
+            <h1>🌞 Summer Planner</h1>
+            <p>Welcome to yet another wonderful summer week.</p>
+        </div>
+
+        <button id="logoutButton" type="button">Log out</button>
+    </header>
+
+    <main class="dashboard-layout">
+        <section class="week-section" aria-labelledby="weekHeading">
+            <div class="section-heading">
+                <div>
+                    <h2 id="weekHeading">My summer week</h2>
+                    <p>Plan work, trips, parties and free days.</p>
+                </div>
+
+                <div class="week-controls">
+                    <button id="previousWeekButton" type="button">&laquo;Previous</button>
+                    <p id="currentWeekLabel">Week view</p>
+                    <button id="nextWeekButton" type="button">Next&raquo;</button>
+                </div>
+            </div>
+
+            <form id="eventForm" class="planner-form">
+                <h3>Add event</h3>
+
+                <label for="eventTitle">Title</label>
+                <input type="text" id="eventTitle" required />
+
+                <label for="eventDate">Date</label>
+                <input type="date" id="eventDate" required />
+
+                <label for="eventTime">Time</label>
+                <input type="time" id="eventTime" />
+
+                <label for="eventCategory">Category</label>
+                <select id="eventCategory">
+                    <option value="work">Work</option>
+                    <option value="fun">Fun</option>
+                    <option value="travel">Travel</option>
+                    <option value="rest">Rest</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label for="eventDescription">Description</label>
+                <textarea id="eventDescription" rows="3"></textarea>
+
+                <button type="submit">Add event</button>
+            </form>
+
+            <section id="weekPlanner" class="week-planner" aria-label="Events by day">
+                <!-- Events will be rendered here with JavaScript -->
+            </section>
+        </section>
+
+        <aside class="todo-panel" aria-labelledby="todoHeading">
+            <h2 id="todoHeading">Summer todos</h2>
+            <p>Small things to remember during summer.</p>
+
+            <form id="todoForm" class="planner-form">
+                <label for="todoText">Todo</label>
+                <input type="text" id="todoText" required />
+
+                <button type="submit">Add todo</button>
+            </form>
+
+            <div id="todosList" class="todos-list">
+                <!-- Todos will be rendered here with JavaScript -->
+            </div>
+        </aside>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Summer Planner by Fredrika Stjernlöf. All rights reserved.</p>
+    </footer>
+
+    <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>
