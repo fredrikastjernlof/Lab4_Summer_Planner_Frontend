@@ -1,12 +1,56 @@
 <!doctype html>
-<html lang="sv">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Startsida - Summer Planner</title>
-  </head>
-  <body>
-   
-    <script type="module" src="/src/js/main.js"></script>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon_sun.png">
+  <title>Home - Summer Planner</title>
+</head>
+
+<body>
+  <header class="site-header">
+    <h1>🌞 Summer Planner</h1>
+    <p>Plan your sunny days, trips, todos and summer moments.</p>
+  </header>
+
+  <main>
+    <section class="auth-section" aria-label="Account access">
+      <article class="auth-card">
+        <h2>Create account</h2>
+
+        <form id="registerForm">
+          <label for="registerUsername">Username</label>
+          <input type="text" id="registerUsername" required />
+
+          <label for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" required />
+
+          <button type="submit">Register</button>
+        </form>
+      </article>
+
+      <article class="auth-card">
+        <h2>Log in</h2>
+
+        <form id="loginForm">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" required />
+
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required />
+
+          <button type="submit">Log in</button>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Summer Planner by Fredrika Stjernlöf. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+
 </html>
