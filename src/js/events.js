@@ -24,21 +24,39 @@ export function initEvents() {
 // Creates a new event and saves it through the API
 async function createEvent(event) {
     event.preventDefault();
+    clearEventErrors();
 
     const title = document.querySelector("#eventTitle").value;
     const date = document.querySelector("#eventDate").value;
+    const endDate = document.querySelector("#eventEndDate").value;
     const time = document.querySelector("#eventTime").value;
     const endTime = document.querySelector("#eventEndTime").value;
     const category = document.querySelector("#eventCategory").value;
     const description = document.querySelector("#eventDescription").value;
 
-    const newEvent = {
+    const validationErrors = validateEventInput(
         title,
         date,
+        endDate,
+        category,
+        time,
+        endTime,
+        description
+    );
+
+    if (validationErrors.length > 0) {
+        showEventStatus(validationErrors);
+        return;
+    }
+
+    const newEvent = {
+        title: title.trim(),
+        date,
+        endDate,
         time,
         endTime,
         category,
-        description
+        description: description.trim()
     };
 
     try {
@@ -49,11 +67,13 @@ async function createEvent(event) {
         });
 
         if (!response.ok) {
-            alert("Could not create event");
+            showEventStatus("Could not create event.");
             return;
         }
 
         event.target.reset();
+
+        showEventStatus("Event created successfully! 🌞", "success");
 
         // Fetch events again so the new event appears in the current week view
         getEvents();
@@ -151,7 +171,7 @@ function createDayCard(day) {
         eventsContainer.append(emptyMessage);
     } else {
         eventsForDay.forEach((eventItem) => {
-            const eventElement = createEventElement(eventItem);
+            const eventElement = createEventElement(eventItem, day);
             eventsContainer.append(eventElement);
         });
     }
@@ -161,18 +181,22 @@ function createDayCard(day) {
     return dayCard;
 }
 
-// Finds events that match a specific day
+// Finds events that should be shown on a specific day
 function getEventsForDay(day) {
     const dayDateString = getDateString(day);
 
     return savedEvents.filter((eventItem) => {
-        const eventDate = eventItem.date || eventItem.datetime;
-        return eventDate?.startsWith(dayDateString);
+        const startDate = getDateString(new Date(eventItem.date));
+        const endDate = eventItem.endDate
+            ? getDateString(new Date(eventItem.endDate))
+            : startDate;
+
+        return dayDateString >= startDate && dayDateString <= endDate;
     });
 }
 
 // Creates one visual event item inside a day card
-function createEventElement(eventItem) {
+function createEventElement(eventItem, day) {
     const eventElement = document.createElement("article");
     eventElement.classList.add("event-item");
 
@@ -180,22 +204,52 @@ function createEventElement(eventItem) {
     title.textContent = eventItem.title;
 
     const time = document.createElement("p");
-    
-    if (eventItem.time && eventItem.endTime) {
-        time.textContent = `🕒 ${eventItem.time} - ${eventItem.endTime}`;
-    } else if (eventItem.time) {
-        time.textContent = `🕒 ${eventItem.time}`;
+
+    const currentDay = getDateString(day);
+    const startDate = getDateString(new Date(eventItem.date));
+    const endDate = eventItem.endDate
+        ? getDateString(new Date(eventItem.endDate))
+        : startDate;
+
+    if (startDate === endDate) {
+        if (eventItem.time && eventItem.endTime) {
+            time.textContent = `🕒 ${eventItem.time} - ${eventItem.endTime}`;
+        } else if (eventItem.time) {
+            time.textContent = `🕒 Starts ${eventItem.time}`;
+        } else {
+            time.textContent = "🕒 All day";
+        }
+    } else if (currentDay === startDate) {
+        time.textContent = eventItem.time
+            ? `🕒 Starts ${eventItem.time}`
+            : "🕒 Starts today";
+    } else if (currentDay === endDate) {
+        time.textContent = eventItem.endTime
+            ? `🕒 Ends ${eventItem.endTime}`
+            : "🕒 Ends today";
     } else {
-        time.textContent = "🕒 No time set";
+        time.textContent = "🕒 All day";
+    }
+
+    const dateRange = document.createElement("p");
+
+    if (eventItem.endDate) {
+        const startDate = formatDate(new Date(eventItem.date));
+        const endDate = formatDate(new Date(eventItem.endDate));
+
+        dateRange.textContent = `📅 ${startDate} - ${endDate}`;
     }
 
     const category = document.createElement("p");
     category.textContent = eventItem.category ? `🏷️ ${eventItem.category}` : "";
 
     const description = document.createElement("p");
-    description.textContent = eventItem.description || "";
 
-    eventElement.append(title, time, category, description);
+    description.textContent = eventItem.description
+        ? `ℹ️ ${eventItem.description}`
+        : "ℹ️ No description";
+
+    eventElement.append(title, time, dateRange, category, description);
 
     return eventElement;
 }
@@ -225,4 +279,91 @@ function formatDate(date) {
 // Converts a Date object into YYYY-MM-DD format
 function getDateString(date) {
     return date.toISOString().split("T")[0];
+}
+
+// Validates event form input before sending it to the API
+function validateEventInput(title, date, endDate, category, time, endTime, description) {
+    const errors = [];
+
+    if (title.trim().length < 1) {
+        setInputError("eventTitle");
+        errors.push("Title is required.");
+    }
+
+    if (!date) {
+        setInputError("eventDate");
+        errors.push("Please choose a start date.");
+    }
+
+    if (endDate && date && endDate < date) {
+        setInputError("eventDate");
+        setInputError("eventEndDate");
+        errors.push("End date must be the same as or later than start date.");
+    }
+
+    if (!category) {
+        setInputError("eventCategory");
+        errors.push("Please choose a category.");
+    }
+
+    if (time && endTime && (!endDate || endDate === date) && endTime <= time) {
+        setInputError("eventTime");
+        setInputError("eventEndTime");
+        errors.push("End time must be later than start time when the event starts and ends on the same day.");
+    }
+
+    if (description.length > 200) {
+        setInputError("eventDescription");
+        errors.push("Description can be max 200 characters.");
+    }
+
+    return errors;
+}
+
+// Displays status messages for the event form
+function showEventStatus(messages, type = "error") {
+    const statusMessage = document.querySelector("#eventStatusMessage");
+
+    if (!statusMessage) {
+        return;
+    }
+
+    statusMessage.innerHTML = "";
+    statusMessage.className = `status-message status-message--${type}`;
+
+    if (Array.isArray(messages)) {
+        const list = document.createElement("ul");
+
+        messages.forEach((message) => {
+            const item = document.createElement("li");
+            item.textContent = message;
+            list.append(item);
+        });
+
+        statusMessage.append(list);
+    } else {
+        statusMessage.textContent = messages;
+    }
+}
+
+// Adds error styling to an input field
+function setInputError(inputId) {
+    const input = document.querySelector(`#${inputId}`);
+
+    if (!input) {
+        return;
+    }
+
+    input.classList.add("input-error");
+}
+
+// Removes all event form error styles
+function clearEventErrors() {
+    const eventInputs = document.querySelectorAll(
+        "#eventForm input, #eventForm textarea, #eventForm select"
+    );
+
+    eventInputs.forEach((input) => {
+        input.classList.remove("input-error");
+    });
 }
