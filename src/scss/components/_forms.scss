@@ -6,6 +6,25 @@ form {
   margin-top: var.$space-md;
 }
 
+.status-message {
+  min-height: 1.2rem;
+  font-size: 0.95rem;
+}
+
+.status-message--error {
+  color: #c0392b;
+}
+
+.status-message--success {
+  color: #2e7d32;
+}
+
+.input-error {
+  border: 2px solid #c0392b !important;
+  background-color: #fff5f5;
+  outline: none;
+}
+
 input,
 select,
 textarea {
