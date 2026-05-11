@@ -244,12 +244,28 @@ function createEventElement(eventItem, day) {
     category.textContent = eventItem.category ? `🏷️ ${eventItem.category}` : "";
 
     const description = document.createElement("p");
-
     description.textContent = eventItem.description
         ? `ℹ️ ${eventItem.description}`
         : "ℹ️ No description";
 
-    eventElement.append(title, time, dateRange, category, description);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("event-delete");
+    deleteButton.type = "button";
+    deleteButton.textContent = "Delete";
+
+    deleteButton.addEventListener("click", () => {
+        deleteEvent(eventItem._id);
+    });
+
+    eventElement.append(
+        title,
+        time,
+        dateRange,
+        category,
+        description,
+        deleteButton
+    );
 
     return eventElement;
 }
@@ -366,4 +382,31 @@ function clearEventErrors() {
     eventInputs.forEach((input) => {
         input.classList.remove("input-error");
     });
+}
+
+// Delete an event
+async function deleteEvent(eventId) {
+    const confirmed = confirm("Delete this event?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/events/${eventId}`, {
+            method: "DELETE",
+            headers: getAuthHeaders()
+        });
+
+        if (!response.ok) {
+            showEventStatus("Could not delete event.");
+            return;
+        }
+
+        showEventStatus("Event deleted successfully.", "success");
+
+        getEvents();
+    } catch (error) {
+        console.error("Error deleting event:", error);
+    }
 }
