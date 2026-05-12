@@ -7,6 +7,7 @@ form {
 }
 
 .status-message {
+  margin-top: var.$space-sm;
   min-height: 1.2rem;
   font-size: 0.95rem;
   color: #c94b4b;
@@ -14,6 +15,10 @@ form {
 
 .status-message--error {
   color: #c0392b;
+}
+
+.status-message--success {
+  color: #4c9c68;
 }
 
 .input-error {
@@ -61,4 +66,35 @@ textarea {
 
 #currentWeekButton:hover {
   opacity: 1;
+}
+
+/* Loading Overlay */
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.loading-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  min-width: 250px;
+}
+
+.loading-card p {
+  margin-bottom: var.$space-lg;
+  font-size: 1.2rem;
+}
+
+.hidden {
+  display: none;
 }
