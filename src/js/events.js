@@ -31,15 +31,17 @@ export function initEvents() {
 const toggleEventFormBtn = document.querySelector("#toggleEventFormBtn");
 const eventFormPanel = document.querySelector("#eventFormPanel");
 
-toggleEventFormBtn.addEventListener("click", () => {
-    eventFormPanel.classList.toggle("hidden");
+if (toggleEventFormBtn && eventFormPanel) {
+    toggleEventFormBtn.addEventListener("click", () => {
+        eventFormPanel.classList.toggle("hidden");
 
-    const isHidden = eventFormPanel.classList.contains("hidden");
+        const isHidden = eventFormPanel.classList.contains("hidden");
 
-    toggleEventFormBtn.textContent = isHidden
-        ? "+ Add new event"
-        : "− Close event form";
-});
+        toggleEventFormBtn.textContent = isHidden
+            ? "+ Add new event"
+            : "− Close event form";
+    });
+}
 
 // Closes the event form and resets it to default state
 function closeEventForm() {
@@ -116,6 +118,9 @@ async function createEvent(event) {
         if (eventFormTitle) {
             eventFormTitle.textContent = "Add new event";
         }
+
+        currentWeekDate = new Date(savedEvent.date);
+        updateCurrentWeekButtonText();
 
         closeEventForm();
         clearEventStatus();
