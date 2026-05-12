@@ -337,7 +337,13 @@ function createEventElement(eventItem, day) {
     }
 
     const category = document.createElement("p");
-    category.textContent = eventItem.category ? `🏷️ ${eventItem.category}` : "";
+    const formattedCategory =
+        eventItem.category.charAt(0).toUpperCase() +
+        eventItem.category.slice(1);
+
+    category.textContent = eventItem.category
+        ? `🏷️ ${formattedCategory}`
+        : "";
 
     const description = document.createElement("p");
     description.textContent = eventItem.description
