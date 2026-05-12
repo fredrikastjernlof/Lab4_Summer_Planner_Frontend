@@ -43,3 +43,25 @@ textarea {
   display: grid;
   gap: var.$space-sm;
 }
+
+
+/* Buttons */
+
+.toggle-form-btn {
+  margin-bottom: var.$space-md;
+}
+
+#currentWeekButton {
+  margin-top: var.$space-sm;
+  padding: 0;
+  border-radius: 0;
+  background-color: transparent;
+  font-size: 0.85rem;
+  font-weight: 400;
+  text-decoration: underline;
+  opacity: 0.7;
+}
+
+#currentWeekButton:hover {
+  opacity: 1;
+}

@@ -37,6 +37,26 @@
   margin-bottom: 0.4rem;
 }
 
+.event-item--highlight {
+  animation: eventPlaced 0.8s ease;
+}
+
+@keyframes eventPlaced {
+  0% {
+    transform: translateY(-0.5rem);
+    opacity: 0.4;
+  }
+
+  60% {
+    transform: translateY(0.15rem);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
 /* Delete event */
 
 .event-edit,
