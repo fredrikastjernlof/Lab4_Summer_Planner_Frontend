@@ -8,6 +8,7 @@ button {
   border: none;
   background-color: var.$color-primary;
   font-weight: 700;
+  box-shadow: var.$color-shadow 0px 4px 6px -1px, var.$color-shadow 0px 2px 4px -1px;
 }
 
 .account-danger-zone {
