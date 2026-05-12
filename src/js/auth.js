@@ -53,6 +53,8 @@ async function handleRegister(event) {
         "Account created! You can now log in ✅",
         "success"
     );
+
+    event.target.reset();
 }
 
 // Function to handle user login
