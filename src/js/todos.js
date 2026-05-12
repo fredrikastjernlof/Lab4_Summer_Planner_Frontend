@@ -17,8 +17,23 @@ async function createTodo(event) {
 
     const todoInput = document.querySelector("#todoText");
 
+    todoInput.addEventListener("input", () => {
+        todoInput.classList.remove("input-error");
+        showTodoStatus("");
+    });
+
+    todoInput.classList.remove("input-error");
+
+    const todoText = todoInput.value.trim();
+
+    if (todoText.length < 1) {
+        todoInput.classList.add("input-error");
+        showTodoStatus("Please write something before adding a todo.");
+        return;
+    }
+
     const newTodo = {
-        text: todoInput.value,
+        text: todoText,
         completed: false
     };
 
@@ -35,6 +50,8 @@ async function createTodo(event) {
         }
 
         event.target.reset();
+
+        showTodoStatus("");
 
         getTodos();
     } catch (error) {
@@ -155,4 +172,15 @@ async function deleteTodo(todoId) {
     } catch (error) {
         console.error("Error deleting todo:", error);
     }
+}
+
+// Show a status message in the todo panel
+function showTodoStatus(message) {
+    const statusMessage = document.querySelector("#todoStatusMessage");
+
+    if (!statusMessage) {
+        return;
+    }
+
+    statusMessage.textContent = message;
 }

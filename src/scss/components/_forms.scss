@@ -9,14 +9,11 @@ form {
 .status-message {
   min-height: 1.2rem;
   font-size: 0.95rem;
+  color: #c94b4b;
 }
 
 .status-message--error {
   color: #c0392b;
-}
-
-.status-message--success {
-  color: #2e7d32;
 }
 
 .input-error {

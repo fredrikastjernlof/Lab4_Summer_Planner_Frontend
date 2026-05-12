@@ -99,9 +99,11 @@
             <h2 id="todoHeading">Summer todos</h2>
             <p>Small things to remember during summer.</p>
 
-            <form id="todoForm" class="planner-form">
+            <form id="todoForm" class="planner-form" novalidate>
                 <label for="todoText">Todo</label>
                 <input type="text" id="todoText" required />
+
+                <p id="todoStatusMessage" class="status-message"></p>
 
                 <button type="submit">Add todo</button>
             </form>
