@@ -13,8 +13,7 @@
 
 /* Events */
 .week-section,
-.todo-panel,
-.day-card {
+.todo-panel {
   background-color: var.$color-surface;
   padding: var.$space-lg;
   border-radius: var.$radius-lg;
@@ -22,15 +21,20 @@
 }
 
 .day-card {
+  padding: var.$space-lg;
+  border-radius: var.$radius-lg;
+  box-shadow: 0 8px 24px var.$color-shadow;
   display: grid;
   gap: var.$space-sm;
+  background-color: var.$color-bg-day-card;
 }
 
 .event-item {
   margin-top: var.$space-sm;
   padding: var.$space-md;
   border-radius: var.$radius-lg;
-  background-color: var.$color-bg;
+  background-color: var.$color-bg-event;
+  box-shadow: 0 8px 16px var.$color-shadow;
 }
 
 .event-item h4 {
