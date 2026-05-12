@@ -9,3 +9,15 @@ button {
   background-color: var.$color-primary;
   font-weight: 700;
 }
+
+.account-danger-zone {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+#deleteAccountButton {
+  margin-top: 1rem;
+  color: #882222;
+}
