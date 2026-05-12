@@ -10,6 +10,7 @@ let savedEvents = [];
 
 // Keeps track of the event currently being edited, null if creating a new event
 let editingEventId = null;
+let highlightedEventId = null;
 
 // Initializes event functionality on the dashboard page
 export function initEvents() {
@@ -22,6 +23,26 @@ export function initEvents() {
     nextWeekButton?.addEventListener("click", showNextWeek);
 
     getEvents();
+}
+
+// Unfoald the event form
+const toggleEventFormBtn = document.querySelector("#toggleEventFormBtn");
+const eventFormPanel = document.querySelector("#eventFormPanel");
+
+toggleEventFormBtn.addEventListener("click", () => {
+    eventFormPanel.classList.toggle("hidden");
+
+    const isHidden = eventFormPanel.classList.contains("hidden");
+
+    toggleEventFormBtn.textContent = isHidden
+        ? "+ Add new event"
+        : "− Close event form";
+});
+
+// Closes the event form and resets it to default state
+function closeEventForm() {
+    eventFormPanel.classList.add("hidden");
+    toggleEventFormBtn.textContent = "+ Add new event";
 }
 
 // Creates a new event and saves it through the API
@@ -81,23 +102,32 @@ async function createEvent(event) {
             return;
         }
 
-        event.target.reset();
+        const savedEvent = await response.json();
 
+        event.target.reset();
         editingEventId = null;
 
-        document.querySelector("#eventForm button[type='submit']").textContent =
-            "Add event";
+        document.querySelector("#eventForm button[type='submit']").textContent = "Add event";
+        
+        const eventFormTitle = document.querySelector("#eventFormTitle");
 
-        showEventStatus("Event saved successfully! 🌞", "success");
+        if (eventFormTitle) {
+            eventFormTitle.textContent = "Add new event";
+        }
 
-        getEvents();
+        closeEventForm();
+        clearEventStatus();
+        getEvents(savedEvent._id);
+
     } catch (error) {
         console.error("Error saving event:", error);
+        showEventStatus("Could not save event.");
     }
+
 }
 
 // Fetches all events for the logged-in user
-async function getEvents() {
+async function getEvents(highlightEventId = null) {
     try {
         const response = await fetch(`${API_URL}/events`, {
             headers: getAuthHeaders()
@@ -110,7 +140,9 @@ async function getEvents() {
 
         savedEvents = await response.json();
 
+        highlightedEventId = highlightEventId;
         renderWeek();
+
     } catch (error) {
         console.error("Error fetching events:", error);
     }
@@ -213,6 +245,22 @@ function getEventsForDay(day) {
 function createEventElement(eventItem, day) {
     const eventElement = document.createElement("article");
     eventElement.classList.add("event-item");
+
+    eventElement.tabIndex = -1;
+
+    if (eventItem._id === highlightedEventId) {
+        eventElement.classList.add("event-item--highlight");
+
+        setTimeout(() => {
+            eventElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            eventElement.focus();
+            highlightedEventId = null;
+        }, 100);
+    }
 
     const title = document.createElement("h4");
     title.textContent = eventItem.title;
@@ -386,6 +434,17 @@ function showEventStatus(messages, type = "error") {
     }
 }
 
+function clearEventStatus() {
+    const statusMessage = document.querySelector("#eventStatusMessage");
+
+    if (!statusMessage) {
+        return;
+    }
+
+    statusMessage.innerHTML = "";
+    statusMessage.className = "";
+}
+
 // Adds error styling to an input field
 function setInputError(inputId) {
     const input = document.querySelector(`#${inputId}`);
@@ -412,6 +471,15 @@ function clearEventErrors() {
 function startEditEvent(eventItem) {
     editingEventId = eventItem._id;
 
+    eventFormPanel.classList.remove("hidden");
+    toggleEventFormBtn.textContent = "− Close event form";
+
+    const eventFormTitle = document.querySelector("#eventFormTitle");
+
+    if (eventFormTitle) {
+        eventFormTitle.textContent = "Edit event";
+    }
+
     document.querySelector("#eventTitle").value = eventItem.title || "";
     document.querySelector("#eventDate").value = getDateString(new Date(eventItem.date));
 
@@ -424,10 +492,8 @@ function startEditEvent(eventItem) {
     document.querySelector("#eventCategory").value = eventItem.category || "";
     document.querySelector("#eventDescription").value = eventItem.description || "";
 
-    document.querySelector("#eventForm button[type='submit']").textContent =
-        "Update event";
+    document.querySelector("#eventForm button[type='submit']").textContent = "Update event";
 
-    showEventStatus("Editing event. Update the form and save changes.", "success");
 
     document.querySelector("#eventForm").scrollIntoView({
         behavior: "smooth"
@@ -452,8 +518,6 @@ async function deleteEvent(eventId) {
             showEventStatus("Could not delete event.");
             return;
         }
-
-        showEventStatus("Event deleted successfully.", "success");
 
         getEvents();
     } catch (error) {
