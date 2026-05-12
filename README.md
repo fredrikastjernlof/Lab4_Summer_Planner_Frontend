@@ -140,7 +140,7 @@ npm run preview
 
 Webbplatsen är publicerad via Netlify:
 
-[Öppna webbplats]()
+[Öppna webbplats](https://lab4-summer-planner.netlify.app/)
 
 ---
 
