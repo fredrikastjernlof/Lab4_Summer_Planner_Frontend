@@ -39,8 +39,10 @@
 
 /* Delete event */
 
+.event-edit,
 .event-delete {
   margin-top: var.$space-sm;
+  margin-left: var.$space-md;
   padding: 0;
   border-radius: 0;
   background-color: transparent;
@@ -50,6 +52,7 @@
   opacity: 0.7;
 }
 
+-event-edit:hover,
 .event-delete:hover {
   opacity: 1;
 }

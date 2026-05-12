@@ -8,6 +8,9 @@ let currentWeekDate = new Date();
 // Stores all events fetched from the API
 let savedEvents = [];
 
+// Keeps track of the event currently being edited, null if creating a new event
+let editingEventId = null;
+
 // Initializes event functionality on the dashboard page
 export function initEvents() {
     const eventForm = document.querySelector("#eventForm");
@@ -59,26 +62,37 @@ async function createEvent(event) {
         description: description.trim()
     };
 
+
+    const url = editingEventId
+        ? `${API_URL}/events/${editingEventId}`
+        : `${API_URL}/events`;
+
+    const method = editingEventId ? "PUT" : "POST";
+
     try {
-        const response = await fetch(`${API_URL}/events`, {
-            method: "POST",
+        const response = await fetch(url, {
+            method,
             headers: getAuthHeaders(),
             body: JSON.stringify(newEvent)
         });
 
         if (!response.ok) {
-            showEventStatus("Could not create event.");
+            showEventStatus("Could not save event.");
             return;
         }
 
         event.target.reset();
 
-        showEventStatus("Event created successfully! 🌞", "success");
+        editingEventId = null;
 
-        // Fetch events again so the new event appears in the current week view
+        document.querySelector("#eventForm button[type='submit']").textContent =
+            "Add event";
+
+        showEventStatus("Event saved successfully! 🌞", "success");
+
         getEvents();
     } catch (error) {
-        console.error("Error creating event:", error);
+        console.error("Error saving event:", error);
     }
 }
 
@@ -249,6 +263,15 @@ function createEventElement(eventItem, day) {
         : "ℹ️ No description";
 
 
+    const editButton = document.createElement("button");
+    editButton.classList.add("event-edit");
+    editButton.type = "button";
+    editButton.textContent = "Edit";
+
+    editButton.addEventListener("click", () => {
+        startEditEvent(eventItem);
+    });
+
     const deleteButton = document.createElement("button");
     deleteButton.classList.add("event-delete");
     deleteButton.type = "button";
@@ -264,6 +287,7 @@ function createEventElement(eventItem, day) {
         dateRange,
         category,
         description,
+        editButton,
         deleteButton
     );
 
@@ -381,6 +405,32 @@ function clearEventErrors() {
 
     eventInputs.forEach((input) => {
         input.classList.remove("input-error");
+    });
+}
+
+// Starts edit mode and fills the form with the selected event
+function startEditEvent(eventItem) {
+    editingEventId = eventItem._id;
+
+    document.querySelector("#eventTitle").value = eventItem.title || "";
+    document.querySelector("#eventDate").value = getDateString(new Date(eventItem.date));
+
+    document.querySelector("#eventEndDate").value = eventItem.endDate
+        ? getDateString(new Date(eventItem.endDate))
+        : "";
+
+    document.querySelector("#eventTime").value = eventItem.time || "";
+    document.querySelector("#eventEndTime").value = eventItem.endTime || "";
+    document.querySelector("#eventCategory").value = eventItem.category || "";
+    document.querySelector("#eventDescription").value = eventItem.description || "";
+
+    document.querySelector("#eventForm button[type='submit']").textContent =
+        "Update event";
+
+    showEventStatus("Editing event. Update the form and save changes.", "success");
+
+    document.querySelector("#eventForm").scrollIntoView({
+        behavior: "smooth"
     });
 }
 
