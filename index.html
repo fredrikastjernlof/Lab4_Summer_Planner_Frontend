@@ -23,13 +23,13 @@
 
         <form id="registerForm" novalidate>
           <label for="registerUsername">Username</label>
-          <input type="text" id="registerUsername" required />
+          <input type="text" id="registerUsername" required autocomplete="username">
 
           <label for="registerPassword">Password</label>
-          <input type="password" id="registerPassword" required />
+          <input type="password" id="registerPassword" required autocomplete="new-password">
 
           <label for="registerPasswordConfirm">Repeat password</label>
-          <input id="registerPasswordConfirm" type="password" />
+          <input id="registerPasswordConfirm" type="password" required autocomplete="new-password" >
 
           <button type="submit">Register</button>
         </form>
@@ -42,10 +42,10 @@
 
         <form id="loginForm" novalidate>
           <label for="loginUsername">Username</label>
-          <input type="text" id="loginUsername" required />
+          <input type="text" id="loginUsername" autocomplete="username" required>
 
           <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" required />
+          <input type="password" id="loginPassword" autocomplete="current-password" required>
 
           <button type="submit">Log in</button>
         </form>
