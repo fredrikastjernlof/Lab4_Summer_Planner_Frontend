@@ -45,7 +45,7 @@ async function createTodo(event) {
         });
 
         if (!response.ok) {
-            alert("Could not create todo");
+            alert("Could not create ToDo");
             return;
         }
 
@@ -55,7 +55,7 @@ async function createTodo(event) {
 
         getTodos();
     } catch (error) {
-        console.error("Error creating todo:", error);
+        console.error("Error creating ToDo:", error);
     }
 }
 
@@ -75,7 +75,7 @@ async function getTodos() {
 
         renderTodos(todos);
     } catch (error) {
-        console.error("Error fetching todos:", error);
+        console.error("Error fetching ToDo´s:", error);
     }
 }
 
@@ -87,7 +87,7 @@ function renderTodos(todos) {
 
     if (todos.length === 0) {
         const emptyMessage = document.createElement("p");
-        emptyMessage.textContent = "No todos yet";
+        emptyMessage.textContent = "No ToDo´s yet";
 
         todosList.append(emptyMessage);
 
@@ -152,13 +152,13 @@ async function toggleTodo(todoItem) {
         });
 
         if (!response.ok) {
-            alert("Could not update todo");
+            alert("Could not update ToDo");
             return;
         }
 
         getTodos();
     } catch (error) {
-        console.error("Error updating todo:", error);
+        console.error("Error updating ToDo:", error);
     }
 }
 
@@ -171,13 +171,13 @@ async function deleteTodo(todoId) {
         });
 
         if (!response.ok) {
-            alert("Could not delete todo");
+            alert("Could not delete ToDo");
             return;
         }
 
         getTodos();
     } catch (error) {
-        console.error("Error deleting todo:", error);
+        console.error("Error deleting ToDo:", error);
     }
 }
 
