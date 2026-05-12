@@ -17,10 +17,12 @@ export function initEvents() {
     const eventForm = document.querySelector("#eventForm");
     const previousWeekButton = document.querySelector("#previousWeekButton");
     const nextWeekButton = document.querySelector("#nextWeekButton");
+    const currentWeekButton = document.querySelector("#currentWeekButton");
 
     eventForm?.addEventListener("submit", createEvent);
     previousWeekButton?.addEventListener("click", showPreviousWeek);
     nextWeekButton?.addEventListener("click", showNextWeek);
+    currentWeekButton?.addEventListener("click", showCurrentWeek);
 
     getEvents();
 }
@@ -108,7 +110,7 @@ async function createEvent(event) {
         editingEventId = null;
 
         document.querySelector("#eventForm button[type='submit']").textContent = "Add event";
-        
+
         const eventFormTitle = document.querySelector("#eventFormTitle");
 
         if (eventFormTitle) {
@@ -151,13 +153,40 @@ async function getEvents(highlightEventId = null) {
 // Moves the calendar view one week back
 function showPreviousWeek() {
     currentWeekDate.setDate(currentWeekDate.getDate() - 7);
+    updateCurrentWeekButtonText();
     renderWeek();
 }
 
 // Moves the calendar view one week forward
 function showNextWeek() {
     currentWeekDate.setDate(currentWeekDate.getDate() + 7);
+    updateCurrentWeekButtonText();
     renderWeek();
+}
+
+// Moves the calendar view back to the current week
+function showCurrentWeek() {
+    currentWeekDate = new Date();
+    updateCurrentWeekButtonText();
+    renderWeek();
+}
+
+// Updates the current week button text based on whether the user is currently viewing the current week or not
+function updateCurrentWeekButtonText() {
+    const currentWeekButton = document.querySelector("#currentWeekButton");
+
+    if (!currentWeekButton) {
+        return;
+    }
+
+    const today = new Date();
+    const currentWeekStart = getDateString(getWeekDays(today)[0]);
+    const viewedWeekStart = getDateString(getWeekDays(currentWeekDate)[0]);
+
+    currentWeekButton.textContent =
+        currentWeekStart === viewedWeekStart
+            ? "Current week"
+            : "Take me back to current week";
 }
 
 // Renders the full week view
