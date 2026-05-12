@@ -112,6 +112,13 @@ function renderTodos(todos) {
         checkButton.type = "button";
         checkButton.textContent = todoItem.completed ? "✓" : "";
 
+        checkButton.setAttribute(
+            "aria-label",
+            todoItem.completed
+                ? `Mark ${todoItem.text} as not completed`
+                : `Mark ${todoItem.text} as completed`
+        );
+
         checkButton.addEventListener("click", () => {
             toggleTodo(todoItem);
         });
