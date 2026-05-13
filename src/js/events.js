@@ -191,7 +191,7 @@ function updateCurrentWeekButtonText() {
     currentWeekButton.textContent =
         currentWeekStart === viewedWeekStart
             ? "Current week"
-            : "Take me back to current week";
+            : "To current week";
 }
 
 // Renders the full week view
@@ -406,8 +406,13 @@ function formatDate(date) {
 
 // Converts a Date object into YYYY-MM-DD format
 function getDateString(date) {
-    return date.toISOString().split("T")[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
 }
+
 
 // Validates event form input before sending it to the API
 function validateEventInput(title, date, endDate, category, time, endTime, description) {
